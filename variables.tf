@@ -7,3 +7,13 @@ variable "aws_region" {
   description = "AWS region"
   type        = string
 }
+
+variable "environment" {
+  description = "Environment tag for resources"
+  type        = string
+}
+
+variable "project" {
+  description = "Project tag for resources"
+  type        = string
+}

@@ -18,7 +18,14 @@ terraform {
 }
 
 provider "aws" {
-  profile = "terraform"
-  region  = "ap-northeast-1"
+  profile = var.aws_profile
+  region  = var.aws_region
+
+  default_tags {
+    tags = {
+      Environment = "default"
+      Project     = "default-project"
+    }
+  }
 }
 

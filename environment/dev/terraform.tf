@@ -23,9 +23,8 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Name        = "${var.project}-${var.environment}"
-      Environment = var.environment
-      Project     = var.project
+      Environment = var.common_tags.environment
+      Project     = var.common_tags.project
     }
   }
 }

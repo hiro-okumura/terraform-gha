@@ -1,3 +1,10 @@
+variable "common_tags" {
+  type = object({
+    project     = string
+    environment = string
+  })
+}
+
 variable "vpc_cidr_block" {
   description = "CIDR block for the VPC"
   type        = string

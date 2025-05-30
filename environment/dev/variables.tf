@@ -12,16 +12,16 @@ variable "aws_region" {
   type        = string
 }
 
-variable "environment" {
-  description = "Environment tag for resources"
-  type        = string
-}
+# -----------------------------------
+# Tags
+# -----------------------------------
 
-variable "project" {
-  description = "Project tag for resources"
-  type        = string
+variable "common_tags" {
+  type = object({
+    project     = string
+    environment = string
+  })
 }
-
 # -----------------------------------
 # VPC
 # -----------------------------------
@@ -30,10 +30,6 @@ variable "vpc_cidr_block" {
   type        = string
   default     = "10.0.0.0/16"
 }
-
-# -----------------------------------
-# Subnet
-# -----------------------------------
 
 variable "public_subnets" {
   description = "A map of public subnet names to their configuration"
@@ -69,4 +65,23 @@ variable "private_subnets" {
       availability_zone = "ap-northeast-1c"
     }
   }
+}
+
+# -----------------------------------
+# EC2
+# -----------------------------------
+variable "instance_type" {
+  description = "Instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "key_name" {
+  description = "Key name"
+  type        = string
+}
+
+variable "ssh_cidr_blocks" {
+  description = "SSH CIDR blocks"
+  type        = list(string)
 }

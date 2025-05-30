@@ -1,4 +1,5 @@
 variable "common_tags" {
+  description = "Project and environment tags"
   type = object({
     project     = string
     environment = string
@@ -30,7 +31,7 @@ variable "vpc_id" {
   type        = string
 }
 
-# variable "iam_instance_profile" {
-#   description = "IAM instance profile"
-#   type        = string
-# }
+variable "iam_instance_profile" {
+  description = "IAM instance profile"
+  type        = string
+}

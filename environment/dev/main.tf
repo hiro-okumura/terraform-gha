@@ -10,14 +10,26 @@ module "vpc" {
 module "ec2" {
   source = "../../modules/ec2"
 
-  instance_type = var.instance_type
-
-  vpc_id     = module.vpc.vpc_id
-  subnet_id          = module.vpc.public_subnet_id_map["public1"]
-  ssh_cidr_blocks    = var.ssh_cidr_blocks
-
-
+  instance_type        = var.instance_type
   key_name             = var.key_name
+  vpc_id               = module.vpc.vpc_id
+  subnet_id            = module.vpc.public_subnet_id_map["public1"]
+  ssh_cidr_blocks      = var.ssh_cidr_blocks
+  iam_instance_profile = module.s3.s3_access_instance_profile_name
   common_tags          = var.common_tags
+}
 
+module "s3" {
+  source = "../../modules/s3"
+
+  common_tags = var.common_tags
+}
+
+module "rds" {
+  source = "../../modules/rds"
+
+  vpc_id          = module.vpc.vpc_id
+  ec2_sg_id       = module.ec2.app_server_sg_id
+  subnet_group_id = module.vpc.private_subnet_id_map["private1"]
+  common_tags     = var.common_tags
 }

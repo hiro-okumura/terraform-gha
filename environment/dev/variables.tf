@@ -1,7 +1,6 @@
 # -----------------------------------
 # AWS
 # -----------------------------------
-
 variable "aws_profile" {
   description = "AWS CLI profile name"
   type        = string
@@ -15,7 +14,6 @@ variable "aws_region" {
 # -----------------------------------
 # Tags
 # -----------------------------------
-
 variable "common_tags" {
   description = "Project and environment tags"
   type = object({
@@ -23,6 +21,7 @@ variable "common_tags" {
     environment = string
   })
 }
+
 # -----------------------------------
 # VPC
 # -----------------------------------

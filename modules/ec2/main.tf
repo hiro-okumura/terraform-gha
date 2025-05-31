@@ -6,15 +6,13 @@ data "aws_ssm_parameter" "amzn2_ami" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = data.aws_ssm_parameter.amzn2_ami.value
-  instance_type = var.instance_type
-
-  subnet_id     = var.subnet_id
-  vpc_security_group_ids = [ aws_security_group.app_server.id ]
+  ami                         = data.aws_ssm_parameter.amzn2_ami.value
+  instance_type               = var.instance_type
+  key_name                    = var.key_name
+  subnet_id                   = var.subnet_id
+  iam_instance_profile        = var.iam_instance_profile
+  vpc_security_group_ids      = [ aws_security_group.app_server.id ]
   associate_public_ip_address = true
-
-  key_name = var.key_name
-
 
   tags = {
     Name = "${var.common_tags.project}-${var.common_tags.environment}-app-server"

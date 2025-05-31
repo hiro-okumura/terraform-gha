@@ -31,7 +31,7 @@ resource "aws_db_instance" "app_db" {
   availability_zone = data.aws_subnet.app_server_subnet.availability_zone
   multi_az               = false
   db_subnet_group_name   = aws_db_subnet_group.app_db_subnet_group.name
-  vpc_security_group_ids = [var.ec2_sg_id]
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
   publicly_accessible    = false
 
   # Delete
@@ -71,7 +71,7 @@ resource "aws_security_group_rule" "db_sg_ingress" {
   source_security_group_id = var.ec2_sg_id
 }
 
-# SGのデフォルト設定のため明示的に設定する必要はない
+# # SGのデフォルト設定のため明示的に設定する必要はない
 # resource "aws_security_group_rule" "db_sg_egress" {
 #   type              = "egress"
 #   from_port         = 0

@@ -34,16 +34,15 @@ resource "aws_db_instance" "app_db" {
   vpc_security_group_ids = [aws_security_group.db_sg.id]
   publicly_accessible    = false
 
-  # Delete
-  deletion_protection = false # need to set false to delete
-  skip_final_snapshot = true  # need to set true to delete
-  apply_immediately   = true  # need to set true to delete
+  # Delete (to allow deletion)
+  deletion_protection = false
+  skip_final_snapshot = true
+  apply_immediately   = true
 
-#   # Backupを有効化する場合
-#   backup_window              = "04:00-05:00"
-#   backup_retention_period    = 7
-#   maintenance_window         = "Mon:05:00-Mon:08:00"
-#   auto_minor_version_upgrade = false
+  # Backup
+  backup_window              = "04:00-05:00"
+  backup_retention_period    = 7
+  maintenance_window         = "Mon:05:00-Mon:08:00"
 
   tags = {
     Name = "${var.common_tags.project}-${var.common_tags.environment}-app-db"
@@ -70,13 +69,3 @@ resource "aws_security_group_rule" "db_sg_ingress" {
   security_group_id = aws_security_group.db_sg.id
   source_security_group_id = var.ec2_sg_id
 }
-
-# # SGのデフォルト設定のため明示的に設定する必要はない
-# resource "aws_security_group_rule" "db_sg_egress" {
-#   type              = "egress"
-#   from_port         = 0
-#   to_port           = 0
-#   protocol          = "-1"
-#   security_group_id = aws_security_group.db_sg.id
-#   cidr_blocks       = ["0.0.0.0/0"]
-# }

@@ -1,11 +1,6 @@
-variable "common_tags" {
-  description = "Project and environment tags"
-  type = object({
-    project     = string
-    environment = string
-  })
-}
-
+# -----------------------------------
+# Inputs from Parent Module
+# -----------------------------------
 variable "vpc_cidr_block" {
   description = "CIDR block for the VPC"
   type        = string
@@ -26,3 +21,12 @@ variable "private_subnets" {
     availability_zone = string
   }))
 }
+
+variable "common_tags" {
+  description = "Project and environment tags"
+  type = object({
+    project     = string
+    environment = string
+  })
+}
+

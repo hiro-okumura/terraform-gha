@@ -19,7 +19,7 @@ resource "aws_db_instance" "app_db" {
   instance_class = "db.t3.micro"
   engine         = "mysql"
   engine_version = "8.0.41"
-  username       = "adminuser"
+  username       = var.db_username
   manage_master_user_password = true
 
   # Storage

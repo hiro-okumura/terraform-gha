@@ -31,15 +31,10 @@ module "alb" {
   app_server_id      = module.ec2.app_server_id
 }
 
-module "s3" {
-  source = "../../modules/s3"
-
-  common_tags = var.common_tags
-}
-
 module "rds" {
   source = "../../modules/rds"
 
+  db_username = var.db_username
   common_tags = var.common_tags
 
   vpc_id        = module.vpc.vpc_id
@@ -49,4 +44,10 @@ module "rds" {
     module.vpc.private_subnet_id_map["private1"],
     module.vpc.private_subnet_id_map["private2"]
   ]
+}
+
+module "s3" {
+  source = "../../modules/s3"
+
+  common_tags = var.common_tags
 }

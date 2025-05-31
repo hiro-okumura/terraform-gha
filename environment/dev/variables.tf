@@ -33,7 +33,7 @@ variable "vpc_cidr_block" {
 }
 
 variable "public_subnets" {
-  description = "A map of public subnet names to their configuration"
+  description = "Map of public subnet names to their configuration"
   type = map(object({
     cidr_block        = string
     availability_zone = string
@@ -51,7 +51,7 @@ variable "public_subnets" {
 }
 
 variable "private_subnets" {
-  description = "A map of private subnet names to their configuration"
+  description = " Map of private subnet names to their configuration"
   type = map(object({
     cidr_block        = string
     availability_zone = string
@@ -72,17 +72,25 @@ variable "private_subnets" {
 # EC2
 # -----------------------------------
 variable "instance_type" {
-  description = "Instance type"
+  description = "EC2 instance type"
   type        = string
   default     = "t2.micro"
 }
 
 variable "key_name" {
-  description = "Key name"
+  description = "Name of the EC2 Key Pair to enable SSH access"
   type        = string
 }
 
 variable "ssh_cidr_blocks" {
-  description = "SSH CIDR blocks"
+  description = "List of SSH CIDR blocks"
   type        = list(string)
+}
+
+# -----------------------------------
+# RDS
+# -----------------------------------
+variable "db_username" {
+  description = "Username in AWS Secrets Manager for rds access"
+  type        = string
 }

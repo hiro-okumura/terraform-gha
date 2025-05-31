@@ -31,6 +31,9 @@ module "rds" {
   vpc_id             = module.vpc.vpc_id
   ec2_subnet_id      = module.ec2.ec2_subnet_id
   ec2_sg_id          = module.ec2.app_server_sg_id
-  private_subnet_ids = [module.vpc.private_subnet_id_map["private1"], module.vpc.private_subnet_id_map["private2"]]
+  private_subnet_ids = [
+    module.vpc.private_subnet_id_map["private1"],
+    module.vpc.private_subnet_id_map["private2"]
+  ]
   common_tags        = var.common_tags
 }

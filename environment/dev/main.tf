@@ -10,10 +10,10 @@ module "vpc" {
 module "ec2" {
   source = "../../modules/ec2"
 
-  ssh_cidr_blocks      = var.ssh_cidr_blocks
-  instance_type        = var.instance_type
-  key_name             = var.key_name
-  common_tags          = var.common_tags
+  ssh_cidr_blocks = var.ssh_cidr_blocks
+  instance_type   = var.instance_type
+  key_name        = var.key_name
+  common_tags     = var.common_tags
 
   vpc_id               = module.vpc.vpc_id
   subnet_id            = module.vpc.public_subnet_id_map["public1"]
@@ -25,10 +25,10 @@ module "alb" {
 
   common_tags = var.common_tags
 
-  vpc_id      = module.vpc.vpc_id
-  subnet_ids  = values(module.vpc.public_subnet_id_map)
-  app_server_sg_id   = module.ec2.app_server_sg_id
-  app_server_id      = module.ec2.app_server_id
+  vpc_id           = module.vpc.vpc_id
+  subnet_ids       = values(module.vpc.public_subnet_id_map)
+  app_server_sg_id = module.ec2.app_server_sg_id
+  app_server_id    = module.ec2.app_server_id
 }
 
 module "rds" {

@@ -10,10 +10,10 @@ permissions:
   id-token: write
   contents: read
 
-# defaults:
-#   run:
-#     shell: bash
-#     working-directory: "terraform/"
+defaults:
+  run:
+    shell: bash
+    working-directory: "terraform/environment/dev"
 
 jobs:
   terraform-preview:

@@ -39,7 +39,7 @@ jobs:
     needs: terraform-format
     strategy:
       matrix:
-        folder:
+        module_path:
           - modules/alb
           - modules/ec2
           - modules/rds
@@ -60,10 +60,10 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform -chdir=${{ matrix.folder }} init
+        run: terraform -chdir=${{ matrix.module_path }} init
 
       - name: Terraform Validate
-        run: terraform -chdir=${{ matrix.folder }} validate
+        run: terraform -chdir=${{ matrix.module_path }} validate
 
   terraform-environments:
     name: Terraform Environments
@@ -71,7 +71,7 @@ jobs:
     needs: [terraform-format, terraform-modules]
     strategy:
       matrix:
-        folder:
+        environment_path:
           - environment/dev
     steps:
       - name: Checkout
@@ -88,10 +88,10 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform -chdir=${{ matrix.folder }} init
+        run: terraform -chdir=${{ matrix.environment_path }} init
 
       - name: Terraform Validate
-        run: terraform -chdir=${{ matrix.folder }} validate
+        run: terraform -chdir=${{ matrix.environment_path }} validate
 
       - name: Terraform Plan
         env:
@@ -99,4 +99,4 @@ jobs:
           TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
           TF_VAR_ssh_cidr_blocks: ${{ secrets.TF_VAR_SSH_CIDR_BLOCKS }}
           TF_VAR_common_tags: ${{ vars.TF_VAR_COMMON_TAGS }}
-        run: terraform -chdir=${{ matrix.folder }} plan
+        run: terraform -chdir=${{ matrix.environment_path }} plan

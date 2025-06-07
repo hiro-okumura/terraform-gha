@@ -1,0 +1,21 @@
+name: Terraform Preview
+
+on:
+  push:
+    branches:
+      - github-actions
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-preview:
+    name: Terraform Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3

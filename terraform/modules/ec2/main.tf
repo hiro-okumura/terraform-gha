@@ -11,7 +11,7 @@ resource "aws_instance" "app_server" {
   key_name                    = var.key_name
   subnet_id                   = var.subnet_id
   iam_instance_profile        = var.iam_instance_profile
-  vpc_security_group_ids      = [ aws_security_group.app_server.id ]
+  vpc_security_group_ids      = [aws_security_group.app_server.id]
   associate_public_ip_address = true
 
   tags = {

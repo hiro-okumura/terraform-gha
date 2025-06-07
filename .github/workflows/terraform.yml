@@ -47,3 +47,12 @@ jobs:
             terraform validate
             cd - > /dev/null
           done
+      - name: Terraform Plan (All Directories)
+        run: |
+          find . -type f -name '*.tf' -printf '%h\n' | sort -u | while read dir; do
+            echo "Planning $dir"
+            cd "$dir"
+            terraform init -backend=false
+            terraform plan
+            cd - > /dev/null
+          done

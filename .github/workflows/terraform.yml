@@ -65,7 +65,16 @@ jobs:
         run: terraform -chdir=${{ matrix.folder }} validate
 
       - name: Create tfvars file
-        run: echo "${{ secrets.TFVARS_CONTENT }}" > temp.tfvars
+        run: |
+          cat << 'EOF' > temp.tfvars
+          ${{ secrets.TFVARS_CONTENT }}
+          EOF
+
+          echo "=== Generated tfvars file ==="
+          cat temp.tfvars
+          echo "=== End of tfvars file ==="
+
+          terraform fmt temp.tfvars || echo "Format check failed, but continuing..."
 
       - name: Terraform Plan
         run: |

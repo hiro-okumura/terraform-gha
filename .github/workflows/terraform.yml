@@ -69,7 +69,14 @@ jobs:
         run: echo "${{ secrets.TFVARS_CONTENT }}" > temp.tfvars
 
       - name: Terraform Plan
-        run: terraform -chdir=${{ matrix.folder }} plan -var-file="temp.tfvars"
+        run: |
+          TFVARS_PATH="$(pwd)/temp.tfvars"
+          if [ -f "$TFVARS_PATH" ]; then
+            terraform -chdir=${{ matrix.folder }} plan -var-file="$TFVARS_PATH"
+          else
+            echo "Error: tfvars file not found at $TFVARS_PATH"
+            exit 1
+          fi
 
   terraform-environments:
     name: Terraform Environments

@@ -71,6 +71,7 @@ jobs:
     needs: [terraform-format, terraform-modules]
     strategy:
       matrix:
+        # 学習用に拡張性を考慮した形にしているが本件ではdevのみ
         environment_path:
           - environment/dev
     steps:

@@ -71,7 +71,7 @@ resource "aws_lb_listener" "alb_listener" {
 # -----------------------------------
 resource "aws_lb_target_group" "alb_target_group" {
   name     = "${var.common_tags.project}-${var.common_tags.environment}-alb-tg"
-  port     = 80
+  port     = 80s
   protocol = "HTTP"
   vpc_id   = var.vpc_id
 

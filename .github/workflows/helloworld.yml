@@ -1,0 +1,19 @@
+name: hello world
+
+on:
+  push:
+    branches:
+      - github-actions
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  helloworld:
+    name: hello world
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "hello world"

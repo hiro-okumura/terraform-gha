@@ -47,12 +47,14 @@ jobs:
             terraform validate
             cd - > /dev/null
           done
+      - name: Create tfvars file
+        run: echo "${{ secrets.TFVARS_CONTENT }}" > temp.tfvars
       - name: Terraform Plan (All Directories)
         run: |
           find . -type f -name '*.tf' -printf '%h\n' | sort -u | while read dir; do
             echo "Planning $dir"
             cd "$dir"
             terraform init
-            terraform plan
+            terraform plan -var-file=temp.tfvars
             cd - > /dev/null
           done

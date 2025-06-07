@@ -65,8 +65,11 @@ jobs:
       - name: Terraform Validate
         run: terraform -chdir=${{ matrix.folder }} validate
 
+      - name: Create tfvars file
+        run: echo "${{ secrets.TFVARS_CONTENT }}" > temp.tfvars
+
       - name: Terraform Plan
-        run: terraform -chdir=${{ matrix.folder }} plan
+        run: terraform -chdir=${{ matrix.folder }} plan -var-file="temp.tfvars"
 
   terraform-environments:
     name: Terraform Environments

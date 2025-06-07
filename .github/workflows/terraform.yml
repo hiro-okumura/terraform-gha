@@ -37,12 +37,12 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Terraform Init
         run: terraform init
-      - name: Terraform Validate (all directories)
+      - name: Terraform Validate (All Directories)
         run: |
           find . -type f -name '*.tf' -printf '%h\n' | sort -u | while read dir; do
             echo "Validating $dir"
             cd "$dir"
             terraform init -backend=false
             terraform validate
-            cd -
+            cd - > /dev/null
           done

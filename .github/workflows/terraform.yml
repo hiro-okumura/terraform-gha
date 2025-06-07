@@ -20,8 +20,8 @@ defaults:
     working-directory: terraform/
 
 jobs:
-  terraform-preview:
-    name: Terraform Preview
+  terraform-format:
+    name: Terraform Format Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,32 +30,53 @@ jobs:
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Format
         run: terraform fmt -check -recursive
+
+  terraform-preview:
+    name: Terraform Preview
+    runs-on: ubuntu-latest
+    needs: terraform-format
+    strategy:
+      matrix:
+        folder:
+          - environment/dev
+          - modules/alb
+          - modules/ec2
+          - modules/rds
+          - modules/s3
+          - modules/vpc
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
           role-session-name: ${{ env.ROLE_SESSION_NAME }}
           aws-region: ${{ env.AWS_REGION }}
+
       - name: Terraform Init
-        run: terraform init
-      - name: Terraform Validate (All Directories)
-        run: |
-          find . -type f -name '*.tf' -printf '%h\n' | sort -u | while read dir; do
-            echo "Validating $dir"
-            cd "$dir"
-            terraform init
-            terraform validate
-            cd - > /dev/null
-          done
+        run: terraform -chdir=${{ matrix.folder }} init
+
+      - name: Terraform Validate
+        run: terraform -chdir=${{ matrix.folder }} validate
+
       - name: Create tfvars file
         run: echo "${{ secrets.TFVARS_CONTENT }}" > temp.tfvars
-      - name: Terraform Plan (All Directories)
+
+      - name: Terraform Plan
         run: |
-          find . -type f -name '*.tf' -printf '%h\n' | sort -u | while read dir; do
-            echo "Planning $dir"
-            cd "$dir"
-            terraform init
-            terraform plan -var-file=environment/dev/temp.tfvars
-            cd - > /dev/null
-          done
-        working-directory: terraform/environment/dev
+          TFVARS_PATH="$(pwd)/temp.tfvars"
+          if [[ "${{ matrix.folder }}" == "environment/dev" ]]; then
+            if [ -f "$TFVARS_PATH" ]; then
+              terraform -chdir=${{ matrix.folder }} plan -var-file="$TFVARS_PATH"
+            else
+              echo "Error: tfvars file not found at $TFVARS_PATH"
+              exit 1
+            fi
+          else
+            terraform -chdir=${{ matrix.folder }} plan
+          fi

@@ -55,6 +55,6 @@ jobs:
             echo "Planning $dir"
             cd "$dir"
             terraform init
-            terraform plan -var-file=temp.tfvars
+            terraform plan -var-file=environment/dev/temp.tfvars
             cd - > /dev/null
           done

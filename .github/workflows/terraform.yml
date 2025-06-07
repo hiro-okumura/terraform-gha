@@ -36,4 +36,4 @@ jobs:
           role-session-name: "terraform-gha"
           aws-region: ${{ env.AWS_REGION }}
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -no-color

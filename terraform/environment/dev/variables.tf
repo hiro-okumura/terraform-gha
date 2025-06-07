@@ -4,11 +4,13 @@
 variable "aws_profile" {
   description = "AWS CLI profile name"
   type        = string
+  default     = "terraform"
 }
 
 variable "aws_region" {
   description = "AWS region"
   type        = string
+  default     = "ap-northeast-1"
 }
 
 # -----------------------------------

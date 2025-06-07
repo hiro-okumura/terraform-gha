@@ -36,6 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform-format
     strategy:
+      max-parallel: 1
       matrix:
         folder:
           - environment/dev

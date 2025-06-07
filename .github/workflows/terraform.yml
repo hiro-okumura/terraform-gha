@@ -58,4 +58,4 @@ jobs:
             terraform plan -var-file=environment/dev/temp.tfvars
             cd - > /dev/null
           done
-        working-directory: environment/dev
+        working-directory: terraform/environment/dev

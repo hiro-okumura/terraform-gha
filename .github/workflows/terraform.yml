@@ -103,4 +103,33 @@ jobs:
         run: terraform -chdir=${{ matrix.environment_path }} plan
 
       - name: Terraform Apply
+        id: terraform-apply
         run: terraform -chdir=${{ matrix.environment_path }} apply -auto-approve
+
+      - name: Send to Slack
+        if: always()
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: "C090A5GC4TG"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Finished Terraform Apply : ${{ steps.terraform-apply.outputs.stdout }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

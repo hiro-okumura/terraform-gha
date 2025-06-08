@@ -122,13 +122,6 @@ jobs:
                     "emoji": true
                   }
                 }
-                # {
-                #   "type": "section",
-                #   "text": {
-                #     "type": "mrkdwn",
-                #     "text": "Terraform Apply completed"
-                #   }
-                # }
               ]
             }
         env:

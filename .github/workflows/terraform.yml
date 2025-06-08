@@ -126,7 +126,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": ${{ toJSON(format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id)) }}
                   }
                 }
               ]

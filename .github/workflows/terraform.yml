@@ -68,7 +68,9 @@ jobs:
   terraform-environments:
     name: Terraform Environments
     runs-on: ubuntu-latest
-    needs: [terraform-format, terraform-modules]
+    needs: terraform-modules
+    outputs:
+      TF_PLAN_EXITCODE: ${{ steps.terraform-plan.outputs.exitcode }}
     strategy:
       matrix:
         # 学習のため拡張性を考慮した記述にしているが本件ではdev環境のみ
@@ -79,13 +81,12 @@ jobs:
       TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
       TF_VAR_ssh_cidr_blocks: ${{ secrets.TF_VAR_SSH_CIDR_BLOCKS }}
       TF_VAR_common_tags: ${{ vars.TF_VAR_COMMON_TAGS }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -100,13 +101,68 @@ jobs:
         run: terraform -chdir=${{ matrix.environment_path }} validate
 
       - name: Terraform Plan
+        id: terraform-plan
+        continue-on-error: true
         run: terraform -chdir=${{ matrix.environment_path }} plan
+
+      - name: Slack Notification (Request for approval)
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: "C090A5GC4TG"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Request for approval",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+  terraform-deploy:
+    name: Terraform Deploy
+    runs-on: ubuntu-latest
+    needs: terraform-environments
+    strategy:
+      matrix:
+        environment_path:
+          - environment/dev
+    env:
+      TF_VAR_key_name: ${{ secrets.TF_VAR_KEY_NAME }}
+      TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
+      TF_VAR_ssh_cidr_blocks: ${{ secrets.TF_VAR_SSH_CIDR_BLOCKS }}
+      TF_VAR_common_tags: ${{ vars.TF_VAR_COMMON_TAGS }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+          role-session-name: ${{ env.ROLE_SESSION_NAME }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Apply
         id: terraform-apply
         run: terraform -chdir=${{ matrix.environment_path }} apply -auto-approve
 
-      - name: Slack Notification (Terraform Apply Result)
+      - name: Slack Notification (Terraform apply result)
         if: always()
         uses: slackapi/slack-github-action@v1.27.0
         with:
@@ -126,7 +182,8 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-              "text": "Terraform Apply completed: ${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"                  }
+                    "text": "${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"
+                  }
                 }
               ]
             }

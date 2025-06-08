@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "s3_access" {
   version = "2012-10-17"
 
   statement {
-    effect    = "Allow"
+    effect = "Allow"
     actions = [
       "s3:GetObject",
       "s3:PutObject",
@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "ec2_assume_role" {
   version = "2012-10-17"
 
   statement {
-    effect = "Allow"
+    effect  = "Allow"
     actions = ["sts:AssumeRole"]
     principals {
       type        = "Service"

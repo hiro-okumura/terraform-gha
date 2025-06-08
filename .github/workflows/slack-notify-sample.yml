@@ -1,0 +1,41 @@
+name: Slack Notify
+
+on:
+  push:
+    branches:
+      - main
+      - github-actions
+    paths:
+      - .github/workflows/slack-notify-sample.yml
+  workflow_dispatch:
+
+jobs:
+  slack-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send to Slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: "C090A5GC4TG"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Message Header",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Hello World!"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

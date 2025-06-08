@@ -14,5 +14,5 @@ output "private_subnet_id_map" {
 
 output "vpc_id" {
   description = "Main VPC ID"
-  value = aws_vpc.main.id
+  value       = aws_vpc.main.id
 }

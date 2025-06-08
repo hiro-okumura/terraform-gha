@@ -2,9 +2,9 @@
 # VPC
 # -----------------------------------
 resource "aws_vpc" "main" {
-  cidr_block = var.vpc_cidr_block
+  cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
-  enable_dns_support = true
+  enable_dns_support   = true
 
   tags = {
     Name = "${var.common_tags.project}-${var.common_tags.environment}-vpc"
@@ -18,8 +18,8 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   for_each = var.public_subnets
 
-  vpc_id     = aws_vpc.main.id
-  cidr_block = each.value.cidr_block
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value.cidr_block
   availability_zone = each.value.availability_zone
 
   tags = {
@@ -30,8 +30,8 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   for_each = var.private_subnets
 
-  vpc_id     = aws_vpc.main.id
-  cidr_block = each.value.cidr_block
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = each.value.cidr_block
   availability_zone = each.value.availability_zone
 
   tags = {
@@ -67,7 +67,7 @@ resource "aws_route" "public_internet_access" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-resource "aws_route_table" "private"{
+resource "aws_route_table" "private" {
   for_each = aws_subnet.private
 
   vpc_id = aws_vpc.main.id

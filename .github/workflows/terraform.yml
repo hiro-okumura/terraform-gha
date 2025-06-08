@@ -45,7 +45,7 @@ jobs:
     needs: terraform-format-all
     strategy:
       matrix:
-        module_path:
+        modules_path:
           - modules/alb
           - modules/ec2
           - modules/rds
@@ -66,10 +66,10 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Terraform Init
-        run: terraform -chdir=${{ matrix.module_path }} init
+        run: terraform -chdir=${{ matrix.modules_path }} init
 
       - name: Terraform Validate
-        run: terraform -chdir=${{ matrix.module_path }} validate
+        run: terraform -chdir=${{ matrix.modules_path }} validate
 
   terraform-plan:
     name: Terraform Plan

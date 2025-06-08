@@ -3,6 +3,7 @@ name: Slack Notify
 on:
   push:
     branches:
+      - main
       - github-actions
     paths:
       - .github/workflows/slack-notify-sample.yml

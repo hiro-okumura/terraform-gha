@@ -1,5 +1,6 @@
 # 学習としてSlack通知の内容をComposite Actionで実装する
 name: Slack Deploy Result
+
 inputs:
   slack-bot-token:
     description: Slack Bot Token
@@ -19,9 +20,9 @@ inputs:
   github-run-id:
     description: GitHub Run ID
     required: true
+
 runs:
   using: composite
-  shell: bash
   steps:
     - name: Slack Notification (Terraform Deploy Result)
       uses: slackapi/slack-github-action@v1.27.0

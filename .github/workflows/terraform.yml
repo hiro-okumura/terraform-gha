@@ -71,9 +71,14 @@ jobs:
     needs: [terraform-format, terraform-modules]
     strategy:
       matrix:
-        # 学習用に拡張性を考慮した形にしているが本件ではdevのみ
+        # 学習中のため拡張性を考慮した記述にしているが本件ではdev環境のみ
         environment_path:
           - environment/dev
+    env:
+      TF_VAR_key_name: ${{ secrets.TF_VAR_KEY_NAME }}
+      TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
+      TF_VAR_ssh_cidr_blocks: ${{ secrets.TF_VAR_SSH_CIDR_BLOCKS }}
+      TF_VAR_common_tags: ${{ vars.TF_VAR_COMMON_TAGS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,9 +100,7 @@ jobs:
         run: terraform -chdir=${{ matrix.environment_path }} validate
 
       - name: Terraform Plan
-        env:
-          TF_VAR_key_name: ${{ secrets.TF_VAR_KEY_NAME }}
-          TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
-          TF_VAR_ssh_cidr_blocks: ${{ secrets.TF_VAR_SSH_CIDR_BLOCKS }}
-          TF_VAR_common_tags: ${{ vars.TF_VAR_COMMON_TAGS }}
         run: terraform -chdir=${{ matrix.environment_path }} plan
+
+      - name: Terraform Apply
+        run: terraform -chdir=${{ matrix.environment_path }} apply -auto-approve

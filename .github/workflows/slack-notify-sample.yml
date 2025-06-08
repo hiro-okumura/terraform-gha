@@ -5,7 +5,7 @@ on:
     branches:
       - github-actions
     paths:
-      - .github/workflows/slack-notify.yml
+      - .github/workflows/slack-notify-sample.yml
   workflow_dispatch:
 
 jobs:

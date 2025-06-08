@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - github-actions
+    paths:
+      - .github/workflows/slack-notify.yml
   workflow_dispatch:
 
 jobs:

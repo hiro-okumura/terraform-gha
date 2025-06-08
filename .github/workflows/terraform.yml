@@ -14,6 +14,7 @@ permissions:
 env:
   AWS_REGION: ap-northeast-1
   ROLE_SESSION_NAME: terraform-gha
+  SLACK_CHANNEL_ID: C090A5GC4TG
 
 defaults:
   run:
@@ -107,32 +108,15 @@ jobs:
         continue-on-error: true
         run: terraform -chdir=${{ matrix.environment_path }} plan -detailed-exitcode
 
-      - name: Slack Notification (Request for approval)
-        uses: slackapi/slack-github-action@v1.27.0
+      - name: Slack Notification (Request for Approval)
+        if: steps.terraform-plan.outputs.exitcode == '2'
+        uses: ./.github/actions/slack-approval-request
         with:
-          channel-id: "C090A5GC4TG"
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Request for approval",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "URL: ${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel-id: ${{ env.SLACK_CHANNEL_ID }}
+          github-server-url: ${{ github.server_url }}
+          github-repository: ${{ github.repository }}
+          github-run-id: ${{ github.run_id }}
 
   terraform-deploy:
     name: Terraform Deploy
@@ -171,30 +155,13 @@ jobs:
         id: terraform-apply
         run: terraform -chdir=${{ matrix.environment_path }} apply -auto-approve
 
-      - name: Slack Notification (Terraform apply result)
+      - name: Slack Notification (Terraform Apply Result)
         if: always()
-        uses: slackapi/slack-github-action@v1.27.0
+        uses: ./.github/actions/slack-deploy-result
         with:
-          channel-id: "C090A5GC4TG"
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Finished Terraform Apply: ${{ job.status }}",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "URL: ${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel-id: ${{ env.SLACK_CHANNEL_ID }}
+          job-status: ${{ job.status }}
+          github-server-url: ${{ github.server_url }}
+          github-repository: ${{ github.repository }}
+          github-run-id: ${{ github.run_id }}

@@ -1,0 +1,50 @@
+# 学習としてSlack通知の内容をComposite Actionで実装する
+name: Slack Deploy Result
+inputs:
+  slack-bot-token:
+    description: Slack Bot Token
+    required: true
+  channel-id:
+    description: Slack Channel ID
+    required: true
+  job-status:
+    description: Job Status
+    required: true
+  github-server-url:
+    description: GitHub Server URL
+    required: true
+  github-repository:
+    description: GitHub Repository
+    required: true
+  github-run-id:
+    description: GitHub Run ID
+    required: true
+runs:
+  using: composite
+  shell: bash
+  steps:
+    - name: Slack Notification (Terraform Deploy Result)
+      uses: slackapi/slack-github-action@v1.27.0
+      with:
+        channel-id: ${{ inputs.channel-id }}
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Finished Terraform Apply: ${{ inputs.job-status }}"
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "URL: ${{ format('<{0}/{1}/actions/runs/{2}>', inputs.github-server-url, inputs.github-repository, inputs.github-run-id) }}"
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack-bot-token }}

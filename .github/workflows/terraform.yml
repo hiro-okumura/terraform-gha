@@ -105,7 +105,7 @@ jobs:
       - name: Terraform Plan
         id: terraform-plan
         continue-on-error: true
-        run: terraform -chdir=${{ matrix.environment_path }} plan
+        run: terraform -chdir=${{ matrix.environment_path }} plan -detailed-exitcode
 
       - name: Slack Notification (Request for approval)
         uses: slackapi/slack-github-action@v1.27.0

@@ -118,7 +118,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Finished Terraform Apply",
+                    "text": "Finished Terraform Apply: ${{ job.status }}",
                     "emoji": true
                   }
                 },

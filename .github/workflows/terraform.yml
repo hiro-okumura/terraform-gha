@@ -118,7 +118,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "Finished Terraform Apply : ${{ toJson(steps.terraform-apply.outputs.stdout) }}",
+                    "text": "Finished Terraform Apply",
                     "emoji": true
                   }
                 },
@@ -126,8 +126,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": ${{ toJSON(format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id)) }}
-                  }
+              "text": "Terraform Apply completed: ${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"                  }
                 }
               ]
             }

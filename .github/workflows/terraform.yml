@@ -121,13 +121,14 @@ jobs:
                     "text": "Finished Terraform Apply: ${{ job.status }}",
                     "emoji": true
                   }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-              "text": "Terraform Apply completed: ${{ format('<{0}/{1}/actions/runs/{2}>', github.server_url, github.repository, github.run_id) }}"                  }
                 }
+                # {
+                #   "type": "section",
+                #   "text": {
+                #     "type": "mrkdwn",
+                #     "text": "Terraform Apply completed"
+                #   }
+                # }
               ]
             }
         env:

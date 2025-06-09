@@ -78,6 +78,11 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
+variable "ami" {
+  description = "EC2 AMI ID"
+  type        = string
+}
+
 variable "key_name" {
   description = "Name of the EC2 Key Pair to enable SSH access"
   type        = string
@@ -86,12 +91,4 @@ variable "key_name" {
 variable "ssh_cidr_blocks" {
   description = "List of SSH CIDR blocks"
   type        = list(string)
-}
-
-# -----------------------------------
-# RDS
-# -----------------------------------
-variable "db_username" {
-  description = "Username in AWS Secrets Manager for rds access"
-  type        = string
 }

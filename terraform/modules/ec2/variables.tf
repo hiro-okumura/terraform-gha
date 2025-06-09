@@ -11,6 +11,11 @@ variable "instance_type" {
   type        = string
 }
 
+variable "ami" {
+  description = "EC2 AMI ID"
+  type        = string
+}
+
 variable "key_name" {
   description = "EC2 Key Pair name to enable SSH access"
   type        = string
@@ -32,12 +37,18 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "subnet_id" {
-  description = "Subnet ID from vpc module output"
+variable "iam_instance_profile" {
+  description = "s3 access instance profile name from s3 module output"
   type        = string
 }
 
-variable "iam_instance_profile" {
-  description = "s3 access instance profile name from s3 module output"
+variable "public_subnet_ids" {
+  description = "Subnet ID from vpc module output"
+  type        = list(string)
+}
+
+
+variable "alb_target_group_arn" {
+  description = "ALB target group ARN from alb module output"
   type        = string
 }

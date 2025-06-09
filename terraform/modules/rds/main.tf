@@ -1,7 +1,19 @@
 # -----------------------------------
+# AWS Secrets Manager
+# -----------------------------------
+data "aws_secretsmanager_secret_version" "db_credentials" {
+  secret_id = "${var.common_tags.project}-${var.common_tags.environment}-db-credentials"
+}
+
+locals {
+  db_credentials = jsondecode(data.aws_secretsmanager_secret_version.db_credentials.secret_string)
+}
+
+
+# -----------------------------------
 # RDS Subnet Group
 # -----------------------------------
-resource "aws_db_subnet_group" "app_db_subnet_group" {
+resource "aws_db_subnet_group" "this" {
   name       = "${var.common_tags.project}-${var.common_tags.environment}-app-db-subnet-group"
   subnet_ids = var.private_subnet_ids
 }
@@ -9,40 +21,35 @@ resource "aws_db_subnet_group" "app_db_subnet_group" {
 # -----------------------------------
 # RDS
 # -----------------------------------
-data "aws_subnet" "app_server_subnet" {
-  id = var.ec2_subnet_id
+data "aws_subnet" "app_subnet" {
+  id = var.app_subnet_id
 }
 
-# RDSは学習用として簡易な構成とする
-resource "aws_db_instance" "app_db" {
-  identifier                  = "${var.common_tags.project}-${var.common_tags.environment}-app-db"
-  instance_class              = "db.t3.micro"
-  engine                      = "mysql"
-  engine_version              = "8.0.41"
-  username                    = var.db_username
-  manage_master_user_password = true
+resource "aws_db_instance" "db" {
+  identifier     = "${var.common_tags.project}-${var.common_tags.environment}-app-db"
+  instance_class = "db.t3.micro"
+  engine         = "mysql"
+  engine_version = "8.0.41"
+  username       = local.db_credentials.username
+  password       = local.db_credentials.password
 
-  # Storage
   allocated_storage     = 20
   max_allocated_storage = 30
   storage_encrypted     = true
 
-  # Network
-  availability_zone      = data.aws_subnet.app_server_subnet.availability_zone
+  availability_zone      = data.aws_subnet.app_subnet.availability_zone
   multi_az               = false
-  db_subnet_group_name   = aws_db_subnet_group.app_db_subnet_group.name
+  db_subnet_group_name   = aws_db_subnet_group.this.name
   vpc_security_group_ids = [aws_security_group.db_sg.id]
   publicly_accessible    = false
 
-  # Delete (to allow deletion)
-  deletion_protection = false
-  skip_final_snapshot = true
-  apply_immediately   = true
-
-  # Backup
   backup_window           = "04:00-05:00"
   backup_retention_period = 7
   maintenance_window      = "Mon:05:00-Mon:08:00"
+
+  deletion_protection = false
+  skip_final_snapshot = true
+  apply_immediately   = true
 
   tags = {
     Name = "${var.common_tags.project}-${var.common_tags.environment}-app-db"
@@ -61,11 +68,11 @@ resource "aws_security_group" "db_sg" {
   }
 }
 
-resource "aws_security_group_rule" "db_sg_ingress" {
+resource "aws_security_group_rule" "app_ingress" {
   type                     = "ingress"
   from_port                = 3306
   to_port                  = 3306
   protocol                 = "tcp"
   security_group_id        = aws_security_group.db_sg.id
-  source_security_group_id = var.ec2_sg_id
+  source_security_group_id = var.app_sg_id
 }

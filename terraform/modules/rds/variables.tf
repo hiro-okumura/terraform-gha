@@ -1,11 +1,6 @@
 # -----------------------------------
 # Inputs from Parent Module
 # -----------------------------------
-variable "db_username" {
-  description = "Username in AWS Secrets Manager for rds access"
-  type        = string
-}
-
 variable "common_tags" {
   description = "Project and environment tags"
   type = object({
@@ -27,12 +22,12 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
-variable "ec2_subnet_id" {
-  description = "EC2 Subnet ID  from ec2 module output"
+variable "app_subnet_id" {
+  description = "App Subnet ID  from ec2 module output"
   type        = string
 }
 
-variable "ec2_sg_id" {
+variable "app_sg_id" {
   description = "EC2 Security Group ID from ec2 module output"
   type        = string
 }

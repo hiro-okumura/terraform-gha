@@ -9,7 +9,7 @@ resource "random_string" "s3_suffix" {
   special = false
 }
 
-resource "aws_s3_bucket" "app_bucket" {
+resource "aws_s3_bucket" "app" {
   bucket = "${var.common_tags.project}-${var.common_tags.environment}-bucket-${random_string.s3_suffix.result}"
 
   tags = {
@@ -17,16 +17,16 @@ resource "aws_s3_bucket" "app_bucket" {
   }
 }
 
-resource "aws_s3_bucket_versioning" "app_bucket" {
-  bucket = aws_s3_bucket.app_bucket.id
+resource "aws_s3_bucket_versioning" "app" {
+  bucket = aws_s3_bucket.app.id
 
   versioning_configuration {
     status = "Suspended"
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "app_bucket_public_access_block" {
-  bucket                  = aws_s3_bucket.app_bucket.id
+resource "aws_s3_bucket_public_access_block" "app" {
+  bucket                  = aws_s3_bucket.app.id
   block_public_acls       = true
   block_public_policy     = true
   ignore_public_acls      = true
@@ -58,8 +58,8 @@ data "aws_iam_policy_document" "s3_access" {
       "s3:GetBucketLocation"
     ]
     resources = [
-      aws_s3_bucket.app_bucket.arn,
-      "${aws_s3_bucket.app_bucket.arn}/*"
+      aws_s3_bucket.app.arn,
+      "${aws_s3_bucket.app.arn}/*"
     ]
   }
 }

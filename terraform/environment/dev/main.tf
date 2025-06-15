@@ -12,12 +12,16 @@ module "ec2" {
 
   ssh_cidr_blocks = var.ssh_cidr_blocks
   instance_type   = var.instance_type
+  ami             = var.ami
   key_name        = var.key_name
   common_tags     = var.common_tags
 
-  vpc_id               = module.vpc.vpc_id
-  subnet_id            = module.vpc.public_subnet_id_map["public1"]
+  vpc_id = module.vpc.vpc_id
+
   iam_instance_profile = module.s3.s3_access_instance_profile_name
+
+  alb_target_group_arn = module.alb.alb_target_group_arn
+  public_subnet_ids    = [module.vpc.public_subnet_id_map["public1"], module.vpc.public_subnet_id_map["public2"]]
 }
 
 module "alb" {
@@ -25,21 +29,19 @@ module "alb" {
 
   common_tags = var.common_tags
 
-  vpc_id           = module.vpc.vpc_id
-  subnet_ids       = values(module.vpc.public_subnet_id_map)
-  app_server_sg_id = module.ec2.app_server_sg_id
-  app_server_id    = module.ec2.app_server_id
+  vpc_id            = module.vpc.vpc_id
+  public_subnet_ids = values(module.vpc.public_subnet_id_map)
+  app_server_sg_id  = module.ec2.app_sg_id
 }
 
 module "rds" {
   source = "../../modules/rds"
 
-  db_username = var.db_username
   common_tags = var.common_tags
 
   vpc_id        = module.vpc.vpc_id
-  ec2_subnet_id = module.ec2.app_server_subnet_id
-  ec2_sg_id     = module.ec2.app_server_sg_id
+  app_subnet_id = module.ec2.app_subnet_ids[0]
+  app_sg_id     = module.ec2.app_sg_id
   private_subnet_ids = [
     module.vpc.private_subnet_id_map["private1"],
     module.vpc.private_subnet_id_map["private2"]

@@ -3,7 +3,7 @@
 # -----------------------------------
 resource "aws_launch_template" "app" {
   update_default_version = true
-  name                   = "${var.common_tags.project}-${var.common_tags.environment}-app-template"
+  name                   = "${var.common_tags.project}-${var.common_tags.environment}-app-launch-template"
   image_id               = var.ami
   instance_type          = var.instance_type # Auto scaling Groupでも指定できる
   key_name               = var.key_name
@@ -30,14 +30,14 @@ resource "aws_launch_template" "app" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "${var.common_tags.project}-${var.common_tags.environment}-app-template"
+      Name = "${var.common_tags.project}-${var.common_tags.environment}-asg-launch"
     }
   }
 
   tag_specifications {
     resource_type = "volume"
     tags = {
-      Name = "${var.common_tags.project}-${var.common_tags.environment}-app-template"
+      Name = "${var.common_tags.project}-${var.common_tags.environment}-asg-launch"
     }
   }
 }
@@ -46,7 +46,7 @@ resource "aws_launch_template" "app" {
 # Auto Scaling Group
 # -----------------------------------
 resource "aws_autoscaling_group" "app" {
-  name = "${var.common_tags.project}-${var.common_tags.environment}-app-group"
+  name = "${var.common_tags.project}-${var.common_tags.environment}-asg"
 
   min_size         = 2
   max_size         = 2
